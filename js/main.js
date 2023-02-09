@@ -8,29 +8,38 @@
 
 // 'use strict';
 window.addEventListener('DOMContentLoaded', () => {
-    //Создаем массив в котором будут хранится задачи
-    let toDoList = [];
-
     //Получаем элементы со страницы
-    const addTodoMessege = document.querySelector('.textToDo'), // Инпут
+    let addTodoMessege = document.querySelector('.textToDo'), // Инпут
           addBtn = document.querySelector('.add'), //Кнопка
           todo = document.querySelector('.todo');//Список где будут задачи
 
+    //Создаем массив в котором будут хранится задачи
+    let toDoList = [];
+
+
+    //Скрипт который проверяет данные с ключем "todo", и подтягиватьих на страницу
+    if(localStorage.getItem('localdatabase')) {
+        toDoList = JSON.parse(localStorage.getItem('localdatabase'));
+        createNewTodo();
+    }
+
+    
+
     //Создаем обработчик событий
     addBtn.addEventListener('click', () => {
-        // addTodoMessege.push(toDoList);
         let newToDo = {
             todo: addTodoMessege.value,
             checked: false,
             important: false        
-        }
+        };
 
     toDoList.push(newToDo);
-
-    console.log(toDoList);
+    createNewTodo(); 
+    localStorage.setItem('localdatabase', JSON.stringify(toDoList));//Преобразовываем массив в строку
     });
 
-    //Создаем функцию которая будет выводить данные из массива на страницу
+    //Создаем функцию которая будет выводить данные из массива на страницу 
+    //И вызываем эту функцию каждый раз при нажатии на кнопку
     function createNewTodo () {
         let createNewTodo = '';
         if (toDoList === 0) todo.innerHTML = '';
@@ -39,14 +48,18 @@ window.addEventListener('DOMContentLoaded', () => {
             <li>
                 <input type='checkbox' id='item_${i}' ${item.checked ? 'checked' : ''}>
                 <label for='item_${i}' class="${item.important ? 'important' : ''}">${item.todo}</label>
-             </li>
+            </li>
             `;
 
             todo.innerHTML = createNewTodo;
         });
     };
-
-    createNewTodo();
+    todo.addEventListener('change', function(event){
+        let idInput = (event.target.getAttribute('id'));
+        let valueLabel = todo.querySelector('[for='+ idInput +']').innerHTML;
+        console.log('valueLabel', valueLabel);
+    });
+    
 });
 
 
