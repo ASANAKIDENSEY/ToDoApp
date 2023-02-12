@@ -47,7 +47,7 @@ window.addEventListener('DOMContentLoaded', () => {
             createNewTodo += `
             <li>
                 <input type='checkbox' id='item_${i}' ${item.checked ? 'checked' : ''}>
-                <label for='item_${i}' class="${item.important ? 'important' : ''}">${item.todo}</label>
+                <label for='item_${i}' class="${item.importantToDo ? 'importantToDo' : ''}">${item.todo}</label>
             </li>
             `;
 
@@ -57,7 +57,30 @@ window.addEventListener('DOMContentLoaded', () => {
     todo.addEventListener('change', function(event){
         let idInput = (event.target.getAttribute('id'));
         let valueLabel = todo.querySelector('[for='+ idInput +']').innerHTML;
-        console.log('valueLabel', valueLabel);
+        
+        toDoList.forEach(function(item){
+            if (item.todo === valueLabel) {
+                item.checked = !item.checked;
+                localStorage.setItem('localdatabase', JSON.stringify(toDoList));
+            }
+        });
+    });
+
+    todo.addEventListener('contextmenu', function(event){
+        event.preventDefault();
+        toDoList.forEach(function(item, i){
+            if(item.todo === event.target.innerHTML){
+                if(event.ctrKey || event.metaKey){
+                    toDoList.splice(i, 1);
+                } else {
+                    item.importantToDo = !item.importantToDo;
+                } 
+                
+                createNewTodo();
+                localStorage.setItem('localdatabase', JSON.stringify(toDoList));
+            }
+        });
+        
     });
     
 });
